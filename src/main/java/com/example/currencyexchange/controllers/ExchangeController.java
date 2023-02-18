@@ -25,14 +25,17 @@ public class ExchangeController {
             date = LocalDate.now().toString();
         }
         List<String> currencies = Arrays.asList("AED", "CAD", "EUR", "INR", "JPY");
-        Map<String, Double> exchangeRates = exchangeService.fetchExchangeRates(date, currencies);
-        
-        System.out.println("exchangeRates: " + exchangeRates);
+        Map<String, Double> exchangeRates = null;
+        try {
+            exchangeRates = exchangeService.fetchExchangeRates(date, currencies);
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
         return ResponseEntity.ok(exchangeRates);
     }
 
     @GetMapping("/getData")
-    public ResponseEntity<String> getData() throws IOException {
+    public ResponseEntity<String> getData() throws IOException, InterruptedException {
         return ResponseEntity.ok(exchangeService.getData());
     }
 }
