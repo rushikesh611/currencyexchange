@@ -11,7 +11,14 @@ public interface AuditInfoService {
 
     List<AuditInfo> getAllLogs();
 
-    AuditInfo getLogById(Long requestId);
+    AuditInfo getLogById(Integer requestId);
 
-    void deleteLog(Long requestId);
+    void deleteLog(Integer requestId);
+
+    Boolean getLogRandomId(Integer requestId);
+
+    // boolean existsByRequest(String request);
+
+    // AuditInfo findByRequest(String request);
+
 }

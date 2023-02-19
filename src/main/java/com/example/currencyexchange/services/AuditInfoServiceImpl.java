@@ -41,7 +41,7 @@ public class AuditInfoServiceImpl implements AuditInfoService{
     }
 
     @Override
-    public AuditInfo getLogById(Long requestId) {
+    public AuditInfo getLogById(Integer requestId) {
         Optional<AuditInfo> auditObj = this.auditInfoRepository.findById(requestId);
 
         if(auditObj.isPresent()){
@@ -52,7 +52,7 @@ public class AuditInfoServiceImpl implements AuditInfoService{
     }
 
     @Override
-    public void deleteLog(Long requestId) {
+    public void deleteLog(Integer requestId) {
         Optional<AuditInfo> auditObj = this.auditInfoRepository.findById(requestId);
         if(auditObj.isPresent()){
             this.auditInfoRepository.deleteById(requestId);
@@ -61,5 +61,19 @@ public class AuditInfoServiceImpl implements AuditInfoService{
         }
         
     }
+
+    @Override
+    public Boolean getLogRandomId(Integer requestId) {
+        Optional<AuditInfo> auditObj = this.auditInfoRepository.findById(requestId);
+
+        if(auditObj.isPresent()){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     
+
+   
 }

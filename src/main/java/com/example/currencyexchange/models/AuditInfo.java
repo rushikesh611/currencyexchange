@@ -23,8 +23,8 @@ import lombok.Setter;
 public class AuditInfo {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long requestId;
+    @Column(name = "requestId")
+    private Integer requestId;
 
     public enum RequestStatus {
         SENT_REQUEST,
