@@ -1,28 +1,25 @@
 package com.example.currencyexchange.controllers;
 
-import java.io.IOException;
-import java.time.LocalDate;
-import java.util.AbstractMap;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-
+import com.example.currencyexchange.services.ExchangeService;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.currencyexchange.services.ExchangeService;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.stream.Collectors;
 
 @RestController
 public class ExchangeController {
@@ -35,7 +32,7 @@ public class ExchangeController {
     }
 
     @GetMapping("/exchange-rates")
-    public ResponseEntity<Map<String, Double>> fetchDataByDate(@RequestParam(required = false) String date) throws InterruptedException, ExecutionException{
+    public ResponseEntity<Map<String, Double>> fetchDataByDate(@RequestParam(required = false) String date) throws InterruptedException, ExecutionException, IOException {
         if(date == null) {
             date = LocalDate.now().toString();
         }
@@ -67,9 +64,44 @@ public class ExchangeController {
                 exchangeRates.put(entry.getKey(), entry.getValue());
             }
         }
+
+        Workbook workbook;
+        Sheet sheet;
+        File file = new File("results.xlsx");
+
+        if(!file.exists()){
+            workbook = new XSSFWorkbook();
+            sheet = workbook.createSheet("Exchange Rates");
+
+            Row headerRow = sheet.createRow(0);
+            headerRow.createCell(0).setCellValue("BASE_CURRENCY");
+            headerRow.createCell(1).setCellValue("TARGET_CURRENCY");
+            headerRow.createCell(2).setCellValue("EXCHANGE_RATE");
+            headerRow.createCell(3).setCellValue("CREATED_TS");
+        } else {
+            FileInputStream inputStream = new FileInputStream(file);
+            workbook = new XSSFWorkbook(inputStream);
+            sheet = workbook.getSheetAt(0);
+        }
+
+        int lastRowIndex = sheet.getLastRowNum();
+        for (int i = 0; i < currencies.size(); i++) {
+            Row newRow = sheet.createRow(lastRowIndex + i + 1);
+            Double rate = exchangeRates.get(currencies.get(i));
+            if (rate != null) {
+                newRow.createCell(0).setCellValue("USD");
+                newRow.createCell(1).setCellValue(currencies.get(i));
+                newRow.createCell(2).setCellValue(rate);
+                newRow.createCell(3).setCellValue(LocalDateTime.now().toString());
+            }
+        }
+
+        FileOutputStream outputStream = new FileOutputStream(file);
+        workbook.write(outputStream);
+        outputStream.close();
+
         executorService.shutdown();
         return ResponseEntity.ok().header("timeout", "true").body(exchangeRates);
-        // return ResponseEntity.ok(exchangeRates);
     }
 }
 
