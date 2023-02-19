@@ -26,6 +26,10 @@ public class ExchangeController {
     @Autowired
     private ExchangeService exchangeService;
 
+    public ExchangeController(ExchangeService exchangeService) {
+
+    }
+
     @GetMapping("/getData")
     public ResponseEntity<String> getData(@RequestParam String currency) throws IOException, InterruptedException {
         return ResponseEntity.ok(exchangeService.getData(currency));
