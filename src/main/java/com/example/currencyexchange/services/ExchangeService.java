@@ -7,7 +7,7 @@ import java.util.Map;
 
 public interface ExchangeService {
 
-    Map<String, Double> fetchExchangeRates(String date, List<String> currencies) throws IOException, InterruptedException;
+    Map<String, Double> fetchExchangeRates(String date, List<String> currency) throws IOException, InterruptedException;
 
     String getData(String currency) throws IOException, InterruptedException;
 
