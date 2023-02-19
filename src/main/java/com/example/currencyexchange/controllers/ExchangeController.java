@@ -19,8 +19,13 @@ public class ExchangeController {
     @Autowired
     private ExchangeService exchangeService;
 
+    @GetMapping("/getData")
+    public ResponseEntity<String> getData(@RequestParam String currency) throws IOException, InterruptedException {
+        return ResponseEntity.ok(exchangeService.getData(currency));
+    }
+
     @GetMapping("/exchange-rates")
-    public ResponseEntity<Map<String, Double>> fetchExchangeRates(@RequestParam(required = false) String date){
+    public ResponseEntity<Map<String, Double>> fetchDataByDate(@RequestParam(required = false) String date){
         if(date == null) {
             date = LocalDate.now().toString();
         }
@@ -32,11 +37,6 @@ public class ExchangeController {
             e.printStackTrace();
         }
         return ResponseEntity.ok(exchangeRates);
-    }
-
-    @GetMapping("/getData")
-    public ResponseEntity<String> getData() throws IOException, InterruptedException {
-        return ResponseEntity.ok(exchangeService.getData());
     }
 }
 
