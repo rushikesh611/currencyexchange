@@ -45,6 +45,24 @@ public class ExchangeServiceImpl implements ExchangeService{
         String BASE_CURRENCY = "USD";
 
         for(String currency : currencies) {
+            int requestId = (int)(Math.random()*1000);
+
+            AuditInfo auditInfo = new AuditInfo();
+            auditInfo.setRequestId(requestId);
+            auditInfo.setRequest("https://api.apilayer.com/exchangerates_data/"+date+"?symbols="+ currency +"&base="+BASE_CURRENCY+"");
+            auditInfo.setStatus(RequestStatus.RECEIVED_RESPONSE);
+
+            try {
+                AuditInfo existingAuditInfo = auditInfoService.getLogById(requestId);
+                existingAuditInfo.setResponse(exchangeRates.toString());
+                existingAuditInfo.setStatus(RequestStatus.SENT_REQUEST);
+                auditInfoService.updateLog(existingAuditInfo);
+            } catch (Exception e) {
+                auditInfo.setResponse(exchangeRates.toString());
+                auditInfo.setStatus(RequestStatus.SENT_REQUEST);
+                auditInfoService.createLog(auditInfo);
+            }
+
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create("https://api.apilayer.com/exchangerates_data/"+date+"?symbols="+ currency +"&base="+BASE_CURRENCY+""))
                     .header("apiKey", "")
@@ -54,19 +72,10 @@ public class ExchangeServiceImpl implements ExchangeService{
             JsonNode jsonNode = new ObjectMapper().readTree(response.body());
             Double rate = jsonNode.get("rates").get(currency).asDouble();
             exchangeRates.put(currency, rate);
-        }
 
-        AuditInfo auditInfo = new AuditInfo();
-        Integer randomId = (int)(Math.random()*1000);
-        auditInfo.setRequestId(randomId);
-        auditInfo.setRequest("https://api.apilayer.com/exchangerates_data/"+date+"?symbols="+ currencies +"&base="+BASE_CURRENCY+"");
-        auditInfo.setResponse(exchangeRates.toString());
-        auditInfo.setStatus(RequestStatus.RECEIVED_RESPONSE);
-        // auditInfoService.createLog(auditInfo);
-        if(auditInfoService.getLogRandomId(randomId)){
+            auditInfo.setResponse(exchangeRates.toString());
+            auditInfo.setStatus(RequestStatus.RECEIVED_RESPONSE);
             auditInfoService.updateLog(auditInfo);
-        } else {
-            auditInfoService.createLog(auditInfo);
         }
 
         return exchangeRates;
