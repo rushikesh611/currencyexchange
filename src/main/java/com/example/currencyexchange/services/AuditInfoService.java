@@ -15,10 +15,4 @@ public interface AuditInfoService {
 
     void deleteLog(Integer requestId);
 
-    Boolean getLogRandomId(Integer requestId);
-
-    // boolean existsByRequest(String request);
-
-    // AuditInfo findByRequest(String request);
-
 }

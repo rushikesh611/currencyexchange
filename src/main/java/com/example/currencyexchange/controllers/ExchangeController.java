@@ -60,7 +60,7 @@ public class ExchangeController {
                 };
         }).collect(Collectors.toList());
 
-        List<Future<Map.Entry<String, Double>>> futures = executorService.invokeAll(tasks, 10, TimeUnit.SECONDS);
+        List<Future<Map.Entry<String, Double>>> futures = executorService.invokeAll(tasks, 20, TimeUnit.SECONDS);
 
         for(Future<Map.Entry<String, Double>> future : futures) {
             Map.Entry<String, Double> entry = future.get();

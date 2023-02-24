@@ -60,20 +60,5 @@ public class AuditInfoServiceImpl implements AuditInfoService{
             throw new RuntimeException("Audit not found with id " + requestId);
         }
         
-    }
-
-    @Override
-    public Boolean getLogRandomId(Integer requestId) {
-        Optional<AuditInfo> auditObj = this.auditInfoRepository.findById(requestId);
-
-        if(auditObj.isPresent()){
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    
-
-   
+    }   
 }

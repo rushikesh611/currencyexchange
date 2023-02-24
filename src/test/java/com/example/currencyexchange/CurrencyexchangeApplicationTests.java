@@ -14,15 +14,19 @@ class CurrencyexchangeApplicationTests {
     @Autowired
     private ExchangeService exchangeService;
 
-    @Test
-    public void testFetchExchangeRates() throws Exception {
-        Map<String, Double> exchangeRates = exchangeService.fetchExchangeRates("2020-01-01", Arrays.asList("AED", "CAD", "EUR", "INR", "JPY"));
-        System.out.println(exchangeRates);
+    @Test 
+    public void testGetData() throws Exception {
+        String data = exchangeService.getData("INR");
+        assert data.equals("INR, 2020-01-01, 0.014");
     }
 
     @Test
-    public void testGetData() throws Exception {
-        String data = exchangeService.getData("INR");
-        System.out.println(data);
+    public void testFetchExchangeRates() throws Exception {
+        Map<String, Double> exchangeRates = exchangeService.fetchExchangeRates("2020-01-01", Arrays.asList("AED", "CAD", "EUR", "INR", "JPY"));
+        assert exchangeRates.get("AED") == 0.27;
+        assert exchangeRates.get("CAD") == 0.73;
+        assert exchangeRates.get("EUR") == 1.11;
+        assert exchangeRates.get("INR") == 0.014;
+        assert exchangeRates.get("JPY") == 0.009;
     }
 }

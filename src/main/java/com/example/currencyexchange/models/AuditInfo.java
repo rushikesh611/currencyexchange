@@ -23,6 +23,7 @@ import lombok.Setter;
 public class AuditInfo {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "requestId")
     private Integer requestId;
 
