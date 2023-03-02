@@ -1,33 +1,51 @@
 package com.example.currencyexchange.controllers;
 
-import com.example.currencyexchange.services.ExchangeService;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.AbstractMap;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import com.example.currencyexchange.models.AuditInfo;
+import com.example.currencyexchange.services.AuditInfoService;
+import com.example.currencyexchange.services.ExchangeService;
 
 @RestController
 public class ExchangeController {
     @Autowired
     private ExchangeService exchangeService;
+    @Autowired
+    private AuditInfoService auditInfoService;
 
     public ExchangeController(ExchangeService exchangeService) {
 
+    }
+
+    @GetMapping("/findByRequestName")
+    private List<AuditInfo> findByRequestName(@RequestParam String request) {
+        return this.auditInfoService.findByRequest(request);
     }
 
     @GetMapping("/getData")

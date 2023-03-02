@@ -15,4 +15,6 @@ public interface AuditInfoService {
 
     void deleteLog(Integer requestId);
 
+    List<AuditInfo> findByRequest(String request);
+
 }

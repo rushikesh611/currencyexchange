@@ -59,6 +59,10 @@ public class AuditInfoServiceImpl implements AuditInfoService{
         } else {
             throw new RuntimeException("Audit not found with id " + requestId);
         }
-        
-    }   
+    }
+
+    @Override
+    public List<AuditInfo> findByRequest(String request) {
+        return this.auditInfoRepository.findByRequest(request);
+    }
 }
